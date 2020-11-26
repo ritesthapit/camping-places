@@ -1,0 +1,63 @@
+<%- include("../partials/header") %>
+
+    <div class="row">
+        <div class="col-md-3">
+            <p class = "lead">Yelp Camp</p>
+            <div class="list-group">
+                <li class="list-group-item active">Info 1</li>
+                <li class="list-group-item">Info 2</li>
+                <li class="list-group-item">Info 3</li>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="thumbnail">
+                <img class="img-responsive" src="<%= campground.image %>">
+                <div class="caption-full">
+                    <h4 class="pull-right">$<%=campground.price %>/night</h4>
+                    <h4><a href=""><%= campground.name %></a></h4>
+                    <p> <%= campground.description%></p>
+                    <p>
+                      <em>Submitted By: <a href="/users/<%=campground.author.id%>"><%= campground.author.username %></a>, <%=moment(campground.createdAt).fromNow() %></em>
+                    </p>
+                    <!-- check if current user and equals to campground.author.id or is admin ---able to edit and delete campground-->
+                    <% if(currentUser && campground.author.id.equals(currentUser._id) || currentUser && currentUser.isAdmin){ %>
+                        <a class="btn btn-xs btn-warning" href="/campgrounds/<%=campground._id%>/edit">EDIT</a>
+                        <form id ="delete-form" action="/campgrounds/<%=campground._id%>?_method=DELETE" method="POST">
+                            <button class= "btn btn-xs btn-danger">DELETE</button>
+                        </form>
+                    <% } %>
+                </div>
+            </div>
+            <div class="well">
+                <div class="text-right">
+                     <a class = "btn btn-success" href="/campgrounds/<%=campground._id %>/comments/new">Add New Comment</a>
+                </div>
+                <hr>
+                <% campground.comments.forEach(function (comment) { %>
+                    <div class="row">
+                        <div class="col-md-12">
+                           <strong><%= comment.author.username %></strong> 
+                            <span class="pull-right"><%= moment(comment.createdAt).fromNow() %> </span>
+                            <p><%= comment.text %></p>
+                           
+                        <!-- check if current user and equals to comment.author.id or is admin---able to edit or delete comment -->
+
+                            <% if(currentUser && comment.author.id.equals(currentUser._id) || currentUser && currentUser.isAdmin){ %>
+
+                            <a href="/campgrounds/<%=campground._id%>/comments/<%=comment._id%>/edit" class="btn btn-xs btn-warning">EDIT</a>
+                            <form id="delete-form" action="/campgrounds/<%=campground._id%>/comments/<%=comment._id%>?_method=DELETE" method="POST">
+                                <input type="submit" value="DELETE" class="btn btn-xs btn-danger">
+                            </form>
+                        <% } %>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+<%- include("../partials/footer") %>
